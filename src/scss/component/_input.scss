@@ -1,0 +1,344 @@
+@mixin tip-show {
+    opacity: 1;
+    @include translate(0, 0);
+}
+
+@mixin visible-tip-placeholder-label {
+    @include translate(0, 0);
+    opacity: 1;
+}
+
+@include keyframes(border-input) {
+    50% {
+        //border-color: $color-royal-blue;
+        @include box-shadow(0 -2px 0 0 #CCC inset);
+    }
+}
+
+input, textarea {
+    font-family: 'Roboto';
+    margin: 0;
+    width: 100%;
+    font-size: inherit;
+    border: 0;
+    background-color: #FFF;
+    border-bottom: 1px solid #AAA;
+    padding: 5px 2px;
+    @include border-radius(0);
+    -webkit-appearance: none;
+    @include user-select(initial);
+    @include box-shadow(none);
+    @include transition(all $transition-input ease-out);
+    @include placeholder {
+        color: #AAA;
+        opacity: 1;
+    }
+
+    &:focus {
+        border-color: $color-green;
+    }
+}
+
+input.input, textarea.textarea, input.checkbox {
+    font-size: 16px;
+}
+
+textarea.textarea {
+    height: 70px;
+    width: 100%;
+    max-width: 100%;
+}
+
+wrapper[checkbox] {
+    @include transition(all $transition-input ease-out);
+    @include display-flex;
+
+    > * {
+        @include align-self(center);
+    }
+
+    input[type='checkbox'] {
+        position: absolute;
+        opacity: 0;
+        clip: rect(0, 0, 0, 0);
+        clip: rect(0 0 0 0);
+
+        &[disabled] {
+            + .icon svg, + .icon + .label {
+                opacity: 0.5;
+                cursor: default;
+            }
+        }
+    }
+
+    .icon {
+        height: 24px;
+        width: 24px;
+        cursor: pointer;
+
+        svg {
+            fill: black;
+        }
+
+        &:active {
+            svg {
+                fill: $color-royal-blue;
+            }
+        }
+    }
+
+    .value {
+        cursor: pointer;
+        line-height: 24px;
+        margin-left: 3px;
+
+        &:active {
+            color: $color-royal-blue;
+        }
+    }
+}
+
+wrapper [input], wrapper[textarea], wrapper[select], wrapper[checkbox-component] {
+
+    wrapper[before] {
+        height: 14px;
+        position: relative;
+        display: none;
+
+        &.visible {
+            display: block;
+        }
+    }
+
+    wrapper[after] {
+        position: relative;
+        height: 14px;
+    }
+
+    textarea, input[type='text'], input[type='email'] {
+        &:focus {
+            + wrapper[after] div.tip {
+                @include tip-show;
+            }
+        }
+    }
+
+    wrapper[checkbox] {
+        height: 32px;
+        border-bottom: 1px solid #CCCCCC;
+    }
+
+    &.focus {
+        wrapper[checkbox-input] {
+            border-color: $color-green;
+        }
+
+        wrapper[after] div.tip {
+            @include tip-show;
+        }
+    }
+
+    &[checkbox-component] wrapper[before] {
+        div.label {
+            @include visible-tip-placeholder-label;
+        }
+    }
+
+    &[select] {
+        position: relative;
+
+        select {
+            font-family: 'Roboto';
+            font-size: 16px;
+            width: 100%;
+            padding: 5px 2px;
+            margin: 0;
+            @include border-radius(0);
+            background: white;
+            color: #CCC;
+            border: none;
+            border-bottom: 1px solid #CCC;
+            outline: none;
+            display: inline-block;
+            @include appearance(none);
+            cursor: pointer;
+            @include box-shadow(none);
+
+            &.selected {
+                color: inherit;
+            }
+
+            &:focus {
+                border-color: $color-green;
+            }
+
+            option {
+                color: #000000;
+            }
+        }
+
+        &:after {
+            content: '<>';
+            font: 16px "Consolas", monospace;
+            color: #CCC;
+            @include rotate(90deg);
+            right: 2px;
+            bottom: 18px;
+            padding: 0 0 2px;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        // Targetting Webkit browsers only. FF will show the dropdown arrow with so much padding.
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            select {
+                padding-right: 18px
+            }
+        }
+    }
+
+    &.error {
+        textarea, input {
+            border-color: #B30000;
+            @include box-shadow(0px 1px 0px 0px #B30000);
+        }
+    }
+
+    div.tip, div.error, div.top-placeholder, div.label {
+        position: absolute;
+        top: 0;
+        opacity: 0;
+        @include transition(all $transition-input-after ease-out);
+        white-space: nowrap;
+
+        &.always_tip {
+            opacity: 1;
+        }
+    }
+
+    div.tip, div.error {
+        font-size: 10px;
+        padding: 2px;
+        right: 0;
+        @include translate(0, -20%);
+    }
+
+    div.tip {
+        color: #666;
+    }
+
+    div.error {
+        color: #B30000;
+
+        &.visible {
+            @include translate(0, 0);
+            opacity: 1;
+        }
+
+        .text {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        wrapper[warning] {
+            display: inline-block;
+            vertical-align: middle;
+
+            svg {
+                height: 10px;
+                width: 10px;
+                vertical-align: middle;
+                fill: #800000;
+            }
+        }
+    }
+
+    div.top-placeholder, div.label {
+        font-size: 12px;
+        left: 0;
+        color: #999;
+        z-index: $z-index-input-placeholder;
+        @include translate(0, 20%);
+
+        &.show_top_placeholder {
+            @include translate(0, 0);
+            opacity: 1;
+        }
+    }
+
+    wrapper[datalist] {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        z-index: $z-index-input-datalist;
+        display: block;
+        background-color: white;
+        box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.1);
+        border: 1px solid #CCC;
+        border-top: 0;
+
+        wrapper[data] {
+            padding: 5px 5px 2px;
+            min-height: 35px;
+
+            > wrapper {
+                padding: 5px 0;
+                @include display-flex;
+            }
+
+            &:not(:last-child) {
+                > wrapper {
+                    border-bottom: 1px solid #CCC;
+                }
+            }
+
+            &:focus, &:active {
+                @include box-shadow(0 0 0 2px rgba($color-green, 0.8) inset);
+            }
+
+            wrapper[image],
+            wrapper[letter] {
+                width: 30px;
+
+                img, letter {
+                    display: inline-block;
+                    height: 25px;
+                    width: 25px;
+                    @include border-radius(50%);
+                    background-color: rgba(0, 0, 0, 0.05);
+                    vertical-align: middle;
+                    @include box-shadow(0px 1px 0px 1px rgba(0, 0, 0, 0.1));
+                }
+
+                letter {
+                    text-align: center;
+                    font-size: 16px;
+                    line-height: 25px;
+                    color: white;
+                    @include text-shadow(2px 1px $text-color);
+                }
+            }
+
+            wrapper[title-subtitle] {
+                width: calc(100% - 30px);
+
+                div.title {
+                    font-size: 16px;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+
+                div.subtitle {
+                    font-size: 10px;
+                    color: #999;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+
+}

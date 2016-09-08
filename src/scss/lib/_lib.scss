@@ -1,0 +1,343 @@
+$color-blue: #03a9f4;
+$color-green: #009e91;
+$color-gray: #CCC;
+$color-light-gray: #E5E5E5;
+$color-orange-red: orangered;
+$color-steel-blue: steelblue;
+$color-royal-blue: royalblue;
+$color-dark-orchid: darkorchid;
+$color-medium-purple: mediumpurple;
+$color-dark-gray: darkslategray;
+$color-black-gray: #333;
+$color-google-blue: #33B5E5;
+$color-google-purple: #AA66CC;
+$color-google-green: #99CC00;
+$color-google-orange: #FFBB33;
+$color-google-red: #FF4444;
+$color-light-red: #FF5252;
+$color-dark-red: #d50000;
+
+$colors-players: (
+        1: rgba(#F44336, 0.5),
+        2: rgba(#2196F3, 0.5),
+        3: rgba(#FF9800, 0.5),
+        4: rgba(#004D40, 0.5),
+        5: rgba(#880E4F, 0.5)
+);
+
+$text-color: #212121;
+//#333;
+$text-color-light: #999;
+$text-color-medium: #727272;
+//#666;
+
+$width-min: 320px;
+$width-drawer: 220px;
+$width-content-max: 1024px;
+$width-device-item: 460px;
+$width-page-max: 550px;
+$height-toolbar: 60px;
+
+$transforms: -webkit-transform, -moz-transform, -ms-transform, -o-transform;
+
+$transition-drawer: 150ms;
+$transition-list-selecter: 50ms;
+$transition-loading: 150ms;
+$transition-toast: 150ms;
+$transition-waiting: 150ms;
+$transition-dialog: 100ms;
+$transition-dialog-content: 150ms;
+$transition-page: 150ms;
+$transition-input: 150ms;
+$transition-input-after: 50ms;
+$transition-tip-error: 50ms;
+$transition-button: 150ms;
+$transition-image: 150ms;
+$transition-drawer-item: 150ms;
+$transition-player-drag: 50ms;
+$transition-toolbar-context: 1500ms;
+
+$animation-drawer-item: 150ms;
+$animation-toolbar-button-activate: 150ms;
+
+$background-color-gray: $color-light-gray;
+$background-color-green: $color-green;
+$background-color-active: rgba($color-google-blue, 0.5);
+$background-color-hover: rgba(#EFEFEF, 0.5);
+
+$z-index-drawer: 20;
+$z-index-drawer-shadow: 15;
+$z-index-toolbar: 10;
+$z-index-dialog: 100;
+$z-index-waiting: 100;
+$z-index-loading: 200;
+$z-index-reloading: 25;
+$z-index-toast: 300;
+$z-index-input-datalist: 5;
+$z-index-input-tip: 1;
+$z-index-input-error: 2;
+$z-index-input-placeholder: 1;
+
+$breakpoint-small: 395px;
+$breakpoint-medium: 500px;
+$breakpoint-large: 640px;
+
+// Media Query Ranges
+$small-screen-up: 601px !default;
+$medium-screen-up: 993px !default;
+$large-screen-up: 1201px !default;
+$small-screen: 600px !default;
+$medium-screen: 992px !default;
+$large-screen: 1200px !default;
+
+$medium-and-up: "only screen and (min-width : #{$small-screen-up})" !default;
+$large-and-up: "only screen and (min-width : #{$medium-screen-up})" !default;
+$small-and-down: "only screen and (max-width : #{$small-screen})" !default;
+$medium-and-down: "only screen and (max-width : #{$medium-screen})" !default;
+$medium-only: "only screen and (min-width : #{$small-screen-up}) and (max-width : #{$medium-screen})" !default;
+
+@mixin respond-to-smaller-than($breakpoint) {
+    @media only screen and (max-width: $breakpoint) {
+        @content;
+    }
+}
+
+@mixin respond-to-larger-than($breakpoint) {
+    @media only screen and (min-width: $breakpoint) {
+        @content;
+    }
+}
+
+@mixin respond-to-between($breakpoint-from, $breakpoint-to) {
+    @media only screen and (min-width: $breakpoint-from) and (max-width: $breakpoint-to) {
+        @content;
+    }
+}
+
+@mixin respond-to($media) {
+    @if $media == small {
+        @media only screen and (max-width: $breakpoint-small) {
+            @content;
+        }
+    } @else if $media == not-small {
+        @media only screen and (min-width: $breakpoint-small + 1) {
+            @content;
+        }
+    } @else if $media == medium {
+        @media only screen and (min-width: $breakpoint-small + 1) and (max-width: $breakpoint-medium - 1) {
+            @content;
+        }
+    } @else if $media == mediumx {
+        @media only screen and (min-width: $breakpoint-medium + 1) and (max-width: $breakpoint-large - 1) {
+            @content;
+        }
+    } @else if $media == large {
+        @media only screen and (min-width: $breakpoint-large) {
+            @content;
+        }
+    } @else if $media == not-large {
+        @media only screen and (max-width: $breakpoint-large - 1) {
+            @content;
+        }
+    }
+}
+
+@mixin scroll-indicator {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)), radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 0 100%;
+
+    background-repeat: no-repeat;
+    background-size: 100% 9px, 100% 9px;
+
+    /* Opera doesn't support this in the shorthand */
+    background-attachment: scroll, scroll;
+
+    > * {
+        @include box-sizing(border-box);
+        min-height: 100%;
+
+        /* Covers */
+        background: linear-gradient(#FFFFFF 30%, rgba(255, 255, 255, 0)), linear-gradient(rgba(255, 255, 255, 0), #FFFFFF 70%) 0 100%;
+
+        background-repeat: no-repeat;
+        background-size: 100% 40px, 100% 40px;
+
+        /* Opera doesn't support this in the shorthand */
+        background-attachment: local, local;
+    }
+}
+
+@mixin scroll-indicator-horizontal {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)), radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 0 100%;
+
+    background-repeat: no-repeat;
+    background-size: 9px 100%, 9px 100%;
+
+    /* Opera doesn't support this in the shorthand */
+    background-attachment: scroll, scroll;
+
+    > * {
+        @include box-sizing(border-box);
+        min-height: 100%;
+
+        /* Covers */
+        background: 0 100% linear-gradient(#FFFFFF 30%, rgba(255, 255, 255, 0)), linear-gradient(rgba(255, 255, 255, 0), #FFFFFF 70%);
+
+        background-repeat: no-repeat;
+        background-size: 0 100% 100%, 40px 100%;
+
+        /* Opera doesn't support this in the shorthand */
+        background-attachment: local, local;
+    }
+}
+
+@mixin placeholder {
+    &::-webkit-input-placeholder {
+        @content;
+    }
+    &:-moz-placeholder {
+        @content;
+    }
+    &::-moz-placeholder {
+        @content;
+    }
+    &:-ms-input-placeholder {
+        @content;
+    }
+}
+
+@mixin flex-align-items($align: center) {
+    > * {
+        @include align-self($align);
+    }
+}
+
+@mixin user-select($type: none) {
+    -webkit-user-select: $type;
+    -khtml-user-select: $type;
+    -moz-user-select: $type;
+    -ms-user-select: $type;
+    user-select: $type;
+}
+
+@mixin svg-color($color) {
+    path:not([no-fill]):not([yes-stroke]) {
+        fill: $color;
+    }
+
+    path[yes-stroke] {
+        stroke: $color;
+    }
+}
+
+@mixin focus {
+    @include box-shadow(0px 0px 0px 2px rgba($color-blue, 0.8));
+}
+
+@mixin pug-player-modes {
+    player-free,
+    player {
+        position: relative;
+        @include pug-player-mode-shadow(rgba(#000000, 0.1));
+    }
+
+    &[data-team-mode="assigned"],
+    &[data-state="1"],
+    &[data-state="2"] {
+        player-free,
+        player {
+            @for $i from 1 through 5 {
+                &[data-player-team="#{$i}"] {
+                    @include pug-player-mode-shadow(map-get($colors-players, $i));
+                }
+
+                &[data-player-team="#{$i - 1}"] + [data-player-team="#{$i}"] {
+                    &:before {
+                        content: "vs";
+                        position: absolute;
+                        font-weight: normal;
+                        font-size: 10px;
+                        opacity: 0.4;
+                        top: 0px;
+                        left: 0px;
+                        margin-top: 42px;
+                        margin-left: -5px;
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+@mixin pug-player-mode-shadow($color) {
+    & > .player_image img,
+    & > button {
+        @include box-shadow(0px 0px 0px 1px $color);
+
+        &:not([disabled]) {
+            &:active, &:focus {
+                @include box-shadow(0px 0px 0px 2px rgba($color-blue, 0.8));
+            }
+        }
+    }
+}
+
+// ANIMATIONS
+
+@include keyframes(bounceLeft) {
+    0%,
+    100% {
+        @include translate(0%, 0%);
+    }
+    25% {
+        @include translate(-50%, 0%);
+    }
+}
+
+@include keyframes(bounceRight) {
+    0%,
+    100% {
+        @include translate(0%, 0%);
+    }
+    25% {
+        @include translate(50%, 0%);
+    }
+}
+
+@include keyframes(scaleUp) {
+    0%,
+    100% {
+        @include scale(1);
+    }
+    25% {
+        @include scale(1.2);
+    }
+}
+
+@include keyframes(rotateSmall) {
+    0%,
+    100% {
+        @include rotate(0deg);
+    }
+    25% {
+        @include rotate(30deg);
+    }
+}
+
+@include keyframes(visible-from-bottom) {
+    0% {
+        @include transform(translateY(20px));
+        opacity: 0;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        @include transform(translateY(0px));
+        opacity: 1;
+    }
+}

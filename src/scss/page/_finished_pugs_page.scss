@@ -1,0 +1,300 @@
+page[finished-pugs] {
+    wrapper[filter] {
+        text-align: center;
+
+        > wrapper {
+            @include display-flex(inline-flex);
+            padding: 10px 10px;
+
+            > * {
+                margin-right: 10px;
+            }
+        }
+
+        dropdown-button button.toggle .title {
+            @extend .ellipsis;
+
+            @include respond-to(small) {
+                max-width: 50px;
+            }
+        }
+    }
+
+    wrapper[no-pugs] {
+        display: block;
+        @extend .page_common;
+
+        div + div {
+            margin-top: 10px;
+            text-align: right;
+        }
+    }
+
+    // PUGS
+
+    wrapper[pugs] {
+        display: none;
+
+        &.visible {
+            display: block;
+        }
+
+        div.splitter {
+            height: 5px;
+            background-color: #CCC;
+            margin: auto auto 20px;
+            max-width: 550px;
+        }
+
+        pugs {
+            display: block;
+
+            pug {
+                display: block;
+                @extend .page_common;
+                padding: 0;
+                margin-bottom: 30px;
+                @extend %visible-from-bottom;
+
+                header {
+                    @extend %pug-header;
+                }
+
+                section {
+                    border-top: 2px solid $background-color-gray;
+
+                    teams {
+                        @extend %pug-teams;
+
+                        wrapper[players] {
+                            overflow-x: auto;
+                            -webkit-overflow-scrolling: touch;
+                            padding-right: 10px;
+                            max-width: 100%;
+
+                            @extend %pug-players;
+                        }
+
+                        wrapper[score] {
+                            @extend %pug-score;
+                        }
+                    }
+                }
+
+                footer {
+                    @extend %pug-footer;
+                }
+            }
+        }
+    }
+
+    // /PUGS
+
+    // PUGS TABLE
+
+    wrapper[pugs-tables] {
+        display: none;
+
+        &.visible {
+            display: block;
+        }
+
+        article {
+            @extend .page_common;
+            padding: 0;
+            margin-bottom: 30px;
+            @extend %visible-from-bottom;
+
+            header {
+                font-size: 1.2rem;
+                border-bottom: 2px solid $color-gray;
+                padding: 10px 5px;
+
+                game {
+                    @include display-flex();
+                    @include align-items(center);
+
+                    wrapper[game-icon] {
+                        width: 30px;
+                        height: 30px;
+                        min-width: 30px;
+
+                        svg {
+                            padding: 2px;
+                            height: 100%;
+                            width: 100%;
+                            @include svg-color($color-steel-blue);
+                        }
+                    }
+
+                    .title {
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            wrapper[table] {
+                padding: 0px 10px 5px 10px;
+            }
+
+            table {
+                width: 100%;
+
+                td {
+                    vertical-align: middle;
+                    padding: 5px 5px;
+                }
+
+                .user {
+                    white-space: nowrap;
+                }
+
+                .pug-count {
+                    text-align: center;
+                    width: 1%;
+                    white-space: nowrap;
+                }
+
+                .standing-percent {
+                    text-align: center;
+                    width: 1%;
+                    white-space: nowrap;
+                }
+
+                .rate-diff {
+                    text-align: center;
+                    width: 1%;
+                    white-space: nowrap;
+                }
+
+                .rate {
+                    text-align: center;
+                    width: 1%;
+                    white-space: nowrap;
+                }
+
+                .form {
+                    width: 100px;
+                    display: none;
+
+                    @include respond-to-larger-than($breakpoint-large + 81px) {
+                        display: table-cell;
+                    }
+
+                    @include respond-to(mediumx) {
+                        display: table-cell;
+                    }
+                }
+
+                thead {
+                    color: $text-color-medium;
+
+                    @include respond-to(not-small) {
+                        font-size: 0.8rem;
+                    }
+
+                    td icon {
+                        vertical-align: middle;
+                        line-height: 17px;
+                    }
+
+                    td span {
+                        padding-left: 5px;
+                        display: none;
+                        vertical-align: middle;
+                        line-height: 17px;
+
+                        @include respond-to(not-small) {
+                            display: inline-block;
+                        }
+                    }
+                }
+
+                tbody {
+
+                    tr {
+                        border-top: 1px solid $background-color-gray;
+                    }
+
+                    .user {
+                        user {
+                            @include display-flex();
+                            @include align-items(center);
+
+                            .placing {
+                                @include transform(translateX(-8px));
+                                font-size: 0.7rem;
+                                color: $text-color-light;
+                            }
+                        }
+
+                        wrapper[user-image] {
+                            height: 35px;
+                            width: 35px;
+                            min-width: 35px;
+                            margin-right: 5px;
+
+                            img {
+                                @extend %user-image;
+                            }
+                        }
+
+                        .name {
+                            @include flex(1);
+                            white-space: normal;
+                            line-height: 1.1;
+                        }
+                    }
+
+                    .pug-count {
+                    }
+
+                    .standing-percent {
+                        &:after {
+                            content: "%";
+                        }
+                    }
+
+                    .rate-diff {
+                    }
+
+                    .rate {
+                    }
+
+                    .form {
+                        wrapper {
+                            @include display-flex();
+                        }
+
+                        a {
+                            @extend %pug-player-form-result;
+                            min-width: 16px;
+                            min-height: 16px;
+                            line-height: 16px;
+                            font-size: 0.5rem;
+
+                            + a {
+                                margin-left: 2px;
+                            }
+                        }
+                    }
+                }
+
+                &[data-sort-by="rate-diff"] {
+                    thead .rate-diff * {
+                        border-bottom: 1px solid $color-gray;
+                    }
+                }
+
+                &[data-sort-by="standing-percent"] {
+                    thead .standing-percent * {
+                        border-bottom: 1px solid $color-gray;
+                    }
+                }
+            }
+        }
+    }
+
+    // /PUGS TABLE
+
+}

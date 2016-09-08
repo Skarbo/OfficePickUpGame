@@ -1,0 +1,13 @@
+<user data-bind="with: user">
+    <img data-bind="attr: { 'src': image, 'title': name }"/>
+</user>
+<div class="message">
+    <h2 data-bind="text: title"></h2>
+    <!-- ko foreach: subtitles -->
+    <div class="subtitle" data-bind="text: $data"></div>
+    <!-- /ko -->
+</div>
+<pug data-bind="with: pug">
+    <icon data-bind="html: game.src, attr: { 'title': title }"></icon>
+</pug>
+<icon right class="icon-keyboard-arrow-right"></icon>

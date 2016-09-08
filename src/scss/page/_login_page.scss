@@ -1,0 +1,17 @@
+page[login] {
+    padding: 10px 0;
+
+    wrapper[login-page] {
+        @extend .page_common;
+
+        wrapper[login-button] {
+            margin-top: 10px;
+            text-align: right;
+
+            spinner {
+                margin-right: 10px;
+            }
+        }
+    }
+
+}

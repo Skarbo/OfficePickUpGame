@@ -1,0 +1,37 @@
+waiting {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: $z-index-waiting;
+    background-color: rgba(0, 0, 0, 0.3);
+    @include display-flex;
+    @include flex-direction(column);
+    @include flex-wrap(nowrap);
+    @include justify-content(center);
+    @include align-content(stretch);
+    @include align-items(center);
+    color: $text-color;
+    opacity: 0;
+    @include transition(opacity $transition-waiting ease-out);
+
+    &.showing,
+    &.showed {
+        opacity: 1;
+    }
+
+    .text {
+        font-size: 18px;
+        color: #ffffff;
+        @include text-shadow(2px 1px $text-color);
+    }
+
+    spinner {
+        margin-top: 15px;
+
+        .background-color {
+            background-color: #ffffff !important;
+        }
+    }
+}

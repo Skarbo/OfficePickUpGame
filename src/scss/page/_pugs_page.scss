@@ -1,0 +1,96 @@
+page[pugs] {
+    padding: 10px 0;
+
+    wrapper[pugs-page] {
+
+    }
+
+    /*
+     * Pugs
+     */
+    pugs {
+        display: block;
+
+        /*
+         * State header
+         */
+        .state-header {
+            background-color: $color-steel-blue;
+            margin: auto auto 20px;
+            max-width: 550px; // TODO variable
+            color: white;
+            font-size: 12px; // TODO Rem
+            padding: 5px;
+            @include display-flex;
+            @include align-items(center);
+
+            icon {
+                font-size: 14px;
+                margin-right: 3px;
+            }
+        }
+
+        /*
+         * Pug
+         */
+        pug {
+            display: block;
+            @extend .page_common;
+            padding: 0;
+            margin-bottom: 30px;
+
+            /*
+             * Pug header
+             */
+            header {
+                @extend %pug-header;
+            }
+
+            /*
+             * Pug section
+             */
+            section {
+                border-top: 2px solid $background-color-gray;
+                padding: 10px;
+
+                wrapper[players] {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+
+                    @extend %pug-players;
+
+                    players {
+                        margin: 5px;
+                        @include pug-player-modes;
+                    }
+                }
+            }
+
+            /*
+             * Pug footer
+             */
+            footer {
+                @extend %pug-footer;
+            }
+
+            // selected Pug
+            &.selected {
+                @include box-shadow(0 0 0 2px $color-blue);
+            }
+        }
+    }
+
+    /*
+     * No Pugs
+     */
+    wrapper[no-pugs] {
+        display: block;
+        @extend .page_common;
+
+        div + div {
+            margin-top: 10px;
+            text-align: right;
+        }
+    }
+
+}

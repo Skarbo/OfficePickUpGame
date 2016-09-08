@@ -1,0 +1,43 @@
+@mixin button-color($type) {
+    $color: $color-green;
+    @if ($type == red) {
+        $color: $color-orange-red;
+    } @else if ($type == dark-blue) {
+        $color: $color-royal-blue;
+    }
+
+    background-color: $color;
+
+    &:not([disabled]) {
+        &:active {
+            background-color: rgba($color, 0.5);
+        }
+    }
+}
+
+button {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    cursor: default;
+
+    &:not([disabled]) {
+        cursor: pointer;
+    }
+}
+
+button.button {
+    padding: 5px 10px;
+    color: #ffffff;
+    min-width: 35px;
+    min-height: 35px;
+    border-radius: 2px;
+    @include box-shadow(0 1px 2px 1px rgba(0, 0, 0, 0.3));
+    @include button-color("");
+
+    &[disabled], &[aria-disabled] {
+        opacity: 0.5;
+    }
+}

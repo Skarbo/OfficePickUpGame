@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <link href="css/client.css" media="screen, projection" rel="stylesheet" type="text/css"/>
+    <script type=text/javascript>window.APP_TIME = Date.now();</script>
+    <script data-main="js/client" src="external/require.min.js"></script>
+    <title>Knowit Pick-Up Game</title>
+    <meta http-equiv="cache-control" content="max-age=0"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <link rel="shortcut icon" href="favicon.ico">
+</head>
+<body>
+
+<!-- TEMPLATES -->
+
+<script type="text/html" id="button-component">
+    <button class="button"
+            data-bind="click: onClick, text: text, title: title, attr: { disabled: disabled, type: type }, hasFocus: hasFocus"
+            ontouchstart="" onmouseover=""></button>
+</script>
+
+<script type="text/html" id="toolbar-button">
+    <button class="toolbar"
+            data-bind="attr: { title: title, disabled: disabled }, click: onClick, css: { 'hidden': hidden, 'activate': activate }"
+            ontouchstart="" onmouseover="">
+        <span class="label" data-bind="text: $data.label, css: { visible: $data.label }"></span>
+        <icon class="font" data-bind="text: icon"></icon>
+    </button>
+</script>
+
+<script type="text/html" id="toolbar">
+    <wrapper toolbar data-bind="css: { 'searching': isSearching, 'has_back': hasBack }">
+        <wrapper drawer data-bind="with: drawer">
+            <wrapper toolbar-button data-bind="template: { name: 'toolbar-button', data: $data }"></wrapper>
+        </wrapper>
+        <wrapper back data-bind="with: back, visible: hasBack">
+            <wrapper toolbar-button data-bind="template: { name: 'toolbar-button', data: $data }"></wrapper>
+        </wrapper>
+        <wrapper icon data-bind="if: icon, visible: icon">
+            <icon class="font" data-bind="html: icon, title: title"></icon>
+        </wrapper>
+        <wrapper title>
+            <div class="title" data-bind="text: title"></div>
+            <div class="subtitle" data-bind="text: subtitle, visible: subtitle()"></div>
+        </wrapper>
+        <wrapper search data-bind="with: search, css: { 'hidden': search.hidden }">
+            <wrapper search-button data-bind="template: { name: 'toolbar-button', data: button }"></wrapper>
+            <wrapper search-input data-bind="with: input">
+                <input class="search" type="search"
+                       data-bind="value: value, hasFocus: hasFocus, event: { keyup: onKeyUp }, 'valueUpdate': 'input'"/>
+                <button class="clear" title="Clear search"
+                        data-bind="click: onClearSearchClick, html: clearIcon" ontouchstart="" onmouseover=""></button>
+            </wrapper>
+        </wrapper>
+        <wrapper buttons data-bind="foreach: buttons">
+            <wrapper toolbar-button data-bind="template: { name: 'toolbar-button', data: $data }"></wrapper>
+        </wrapper>
+        <wrapper more data-bind="with: more, visible: !more.hidden()">
+            <wrapper more-button data-bind="template: { name: 'toolbar-button', data: $data }"></wrapper>
+            <wrapper more-items data-bind="foreach: items, css: { 'visible': isMoreVisible }">
+                <button class="more-item"
+                        data-bind="click: onClick, css: { 'hidden': hidden }, attr: { disabled: disabled }"
+                        ontouchstart="" onmouseover="">
+                    <icon class="font" data-bind="html: icon"></icon><span
+                        class="label" data-bind="text: label"></span></button>
+            </wrapper>
+        </wrapper>
+    </wrapper>
+    <wrapper context data-bind="with: context">
+        <wrapper done>
+            <button class="icon-check" data-bind="click: onDoneClick, attr: { 'disabled': disabled }" ontouchstart=""
+                    onmouseover=""><span>Done</span>
+            </button>
+        </wrapper>
+        <wrapper title data-bind="text: title"></wrapper>
+    </wrapper>
+</script>
+
+<script type="text/html" id="drawer">
+    <wrapper drawer>
+        <header>
+            <span class="logo" data-bind="html: logo"></span>
+
+            <div class="title" data-bind="text: header"></div>
+        </header>
+        <section>
+            <ul data-bind="foreach: menuItems">
+                <li data-bind="visible: visible, attr: { 'item-name': name }, css: { 'selected': selected, 'splitter': splitter }">
+                    <button data-bind="click: onClick, attr: { disabled: disabled, title: title }"
+                            ontouchstart="" onmouseover="">
+                        <icon class="menu" data-bind="html: icon, css: { 'font': !$data.isHtml }"></icon>
+                        <div class="title" data-bind="text: title"></div>
+                        <icon class="font arrow">chevron_right</icon>
+                    </button>
+                </li>
+            </ul>
+        </section>
+    </wrapper>
+</script>
+
+<script type="text/html" id="loading">
+    <!-- ko if: !isError() -->
+    <div class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: isError() -->
+    <div class="error" data-bind="html: errorIcon"></div>
+    <!-- /ko -->
+
+    <div class="text" data-bind="text: text"></div>
+</script>
+
+<script type="text/html" id="toast">
+    <div class="text" data-bind="text: text"></div>
+</script>
+
+<script type="text/html" id="pug-comment-toast">
+    <user data-bind="with: pugComment.user">
+        <img data-bind="attr: { 'src': image, 'title': userName }"/>
+    </user>
+    <div class="message" data-bind="text: pugComment.comment_message"></div>
+    <pug data-bind="with: pugComment.getPug()">
+        <icon data-bind="html: game().src, attr: { 'title': title }"></icon>
+    </pug>
+    <icon right class="icon-keyboard-arrow-right"></icon>
+    <div class="counter" data-bind="text: count, visible: count"></div>
+</script>
+
+<script type="text/html" id="waiting">
+    <div class="text" data-bind="text: text"></div>
+    <spinner login-spinner data-bind="template: { name: 'spinner-component', data: spinner }"></spinner>
+</script>
+
+<!-- /TEMPLATES -->
+
+<!-- COMPONENTS -->
+
+<script type="text/html" id="input-component">
+    <wrapper input data-bind="css: { 'error': showError() }, visible: !$data.hidden()">
+        <wrapper before data-bind="css: { 'visible': hasTopPlaceholder }">
+            <div class="top-placeholder"
+                 data-bind="text: placeholder, css: { 'show_top_placeholder': showTopPlaceholder }"></div>
+        </wrapper>
+        <input class="input" data-bind="
+            value: value,
+            attr: {
+                placeholder: placeholder,
+                disabled: disabled,
+                type: type
+            },
+            valueUpdate: 'input',
+            event: { keyup: onInputKey },
+            hasFocus: hasFocus
+        "/>
+        <wrapper after>
+            <div class="tip" data-bind="visible: showTip(), text: tip, css: { 'always_tip': isAlwaysShowTip }"></div>
+            <div class="error" data-bind="css: { visible: showError() }">
+                <div class="text" data-bind="text: error"></div>
+                <wrapper warning data-bind="html: warningIcon"></wrapper>
+            </div>
+            <wrapper datalist data-bind="foreach: datalistResult, visible: showDatalist">
+                <wrapper data tabindex="0"
+                         data-bind="event: { keyup: $parent.onDatabindDataKey }, click: $parent.onClickDatabindData, attr: { title: title }">
+                    <wrapper>
+                        <wrapper image data-bind="visible: $data.image">
+                            <img src="img/1x1.png" class="image"
+                                 data-bind="attr: { 'src': $data.image, title: title }"/>
+                        </wrapper>
+                        <wrapper letter data-bind="visible: $data.letter, with: $data.letter">
+                            <letter data-bind="text: letter, style: { 'background-color': color }"></letter>
+                        </wrapper>
+                        <wrapper title-subtitle>
+                            <div class="title" data-bind="visible: title, text: title"></div>
+                            <div class="subtitle"
+                                 data-bind="visible: $data.subtitle, text: $data.subtitle"></div>
+                        </wrapper>
+                    </wrapper>
+                </wrapper>
+            </wrapper>
+        </wrapper>
+    </wrapper>
+</script>
+
+<script type="text/html" id="select-component">
+    <wrapper select data-bind="css: { 'error': showError() }">
+        <wrapper before data-bind="css: { 'visible': hasTopPlaceholder }">
+            <div class="top-placeholder"
+                 data-bind="text: optionsCaption, css: { 'show_top_placeholder': showTopPlaceholder }"></div>
+        </wrapper>
+        <select class="select" data-bind="
+            options: options,
+            optionsText: optionsText,
+            value: value,
+            optionsCaption: optionsCaption,
+            attr: {
+                disabled: disabled
+            }
+        "></select>
+        <wrapper after>
+            <div class="tip" data-bind="visible: showTip(), text: tip"></div>
+            <div class="error" data-bind="css: { visible: showError() }">
+                <div class="text" data-bind="text: error"></div>
+                <wrapper warning data-bind="html: warningIcon"></wrapper>
+            </div>
+        </wrapper>
+    </wrapper>
+</script>
+
+<script type="text/html" id="radio-component">
+    <wrapper radio data-bind="css: { 'error': showError() }">
+        <div class="radios" data-bind="foreach: radios">
+            <wrapper data-bind="template: { name: 'radio', data: $data }"></wrapper>
+        </div>
+        <wrapper after>
+            <div class="tip" data-bind="visible: showTip(), text: tip"></div>
+            <div class="error" data-bind="css: { visible: showError() }">
+                <div class="text" data-bind="text: error"></div>
+                <wrapper warning data-bind="html: warningIcon"></wrapper>
+            </div>
+        </wrapper>
+    </wrapper>
+</script>
+
+<script type="text/html" id="textarea-component">
+    <wrapper textarea data-bind="css: { 'error': showError() }">
+        <wrapper before data-bind="css: { 'visible': hasTopPlaceholder }">
+            <div class="top-placeholder"
+                 data-bind="text: placeholder, css: { 'show_top_placeholder': showTopPlaceholder }"></div>
+        </wrapper>
+        <textarea class="textarea" type="text" data-bind="
+            value: value,
+            attr: {
+                placeholder: placeholder,
+                disabled: disabled
+            },
+            valueUpdate: 'input',
+            event: { 'keydown': $data.onKeyPress }
+        "></textarea>
+        <wrapper after>
+            <div class="tip" data-bind="visible: showTip(), text: tip"></div>
+            <div class="error" data-bind="css: { visible: showError() }">
+                <div class="text" data-bind="text: error"></div>
+                <wrapper warning data-bind="html: warningIcon"></wrapper>
+            </div>
+        </wrapper>
+    </wrapper>
+</script>
+
+<script type="text/html" id="checkbox-component">
+    <wrapper checkbox-component data-bind="css: { 'error': showError(), 'focus': hasFocus() }">
+        <wrapper before data-bind="css: { 'visible': hasTopPlaceholder }">
+            <div class="label" data-bind="text: label"></div>
+        </wrapper>
+        <wrapper data-bind="template: { name: 'checkbox', data: $data }"></wrapper>
+        <wrapper after>
+            <div class="tip" data-bind="visible: showTip(), text: tip, css: { 'always_tip': isAlwaysShowTip }"></div>
+            <div class="error" data-bind="css: { visible: showError() }">
+                <div class="text" data-bind="text: error"></div>
+                <wrapper warning data-bind="html: warningIcon"></wrapper>
+            </div>
+        </wrapper>
+    </wrapper>
+</script>
+
+<script type="text/html" id="checkbox">
+    <wrapper checkbox data-bind="visible: !hidden">
+        <input class="checkbox" type="checkbox"
+               data-bind="checked: checked, hasFocus: hasFocus, attr: { disabled: disabled }"/>
+
+        <div class="icon" data-bind="html: icon, click: onClickCheckbox" ontouchstart="" onmouseover=""></div>
+        <div class="value" data-bind="visible: $data.value, text: $data.value, click: onClickCheckbox" ontouchstart=""
+             onmouseover=""></div>
+    </wrapper>
+</script>
+
+<script type="text/html" id="radio">
+    <wrapper checkbox data-bind="visible: !hidden">
+        <input class="radio" type="radio"
+               data-bind="checked: checked, hasFocus: hasFocus, attr: { disabled: disabled }"/>
+
+        <div class="icon" data-bind="html: icon, click: onClickRadio" ontouchstart="" onmouseover=""></div>
+        <div class="label" data-bind="visible: $data.label, text: $data.label, click: onClickRadio" ontouchstart=""
+             onmouseover=""></div>
+    </wrapper>
+</script>
+
+<script type="text/html" id="spinner-component">
+    <wrapper spinner data-bind="visible: visible, attr: { 'data-spinner-type': type }">
+        <!-- ko if: type() === '1' -->
+        <div class="rect1 background-color"></div>
+        <div class="rect2 background-color"></div>
+        <div class="rect3 background-color"></div>
+        <div class="rect4 background-color"></div>
+        <div class="rect5 background-color"></div>
+        <!-- /ko -->
+        <!-- ko if: type() === '2' -->
+        <div class="spinner-container container1">
+            <div class="circle1 background-color"></div>
+            <div class="circle2 background-color"></div>
+            <div class="circle3 background-color"></div>
+            <div class="circle4 background-color"></div>
+        </div>
+        <div class="spinner-container container2">
+            <div class="circle1 background-color"></div>
+            <div class="circle2 background-color"></div>
+            <div class="circle3 background-color"></div>
+            <div class="circle4 background-color"></div>
+        </div>
+        <div class="spinner-container container3">
+            <div class="circle1 background-color"></div>
+            <div class="circle2 background-color"></div>
+            <div class="circle3 background-color"></div>
+            <div class="circle4 background-color"></div>
+        </div>
+        <!-- /ko -->
+        <!-- ko if: type() === 'reload' -->
+        <div class="reload"></div>
+        <div class="reload"></div>
+        <div class="reload"></div>
+        <div class="reload"></div>
+        <div class="reload"></div>
+        <!-- /ko -->
+    </wrapper>
+</script>
+
+<script type="text/html" id="alert-dialog-component">
+    <article dialog>
+        <header data-bind="visible: title()">
+            <div class="icon" data-bind="visible: icon, html: icon"></div>
+            <div class="title" data-bind="text: title"></div>
+        </header>
+        <section class="message" data-bind="visible: message(), text: message"></section>
+        <section class="prompt" data-bind="visible: prompt.visible">
+            <input type="text"
+                   data-bind="value: prompt.value, hasFocus: prompt.hasFocus, attr: { 'placeholder': prompt.placeholder }"/>
+        </section>
+        <footer>
+            <wrapper cancel-button data-bind="visible: cancelButton.visible, with: cancelButton">
+                <button data-bind="text: text, click: onClick" ontouchstart="" onmouseover=""></button>
+            </wrapper>
+            <wrapper ok-button data-bind="visible: okButton.visible, with: okButton">
+                <button data-bind="text: text, click: onClick" ontouchstart="" onmouseover=""></button>
+            </wrapper>
+        </footer>
+    </article>
+</script>
+
+<script type="text/html" id="items-dialog-component">
+    <article dialog>
+        <header data-bind="text: title"></header>
+        <section search>
+            <wrapper search data-bind="with: search">
+                <input type="search"
+                       data-bind="value: value, attr: { 'placeholder': placeholder, 'disabled': $root.disabled }, event: { 'keyup': onKeyUp }, valueUpdate: 'input'"/>
+                <icon data-bind="html: icon"></icon>
+            </wrapper>
+        </section>
+        <section items>
+            <items data-bind="foreach: items">
+                <button class="item"
+                        data-bind="click: $root.onItemClick, css: { 'is_selected': $root.isItemSelected(id) }"
+                        ontouchstart="" onmouseover="">
+                    <div class="image" data-bind="visible: $data.image">
+                        <img src="img/1x1.png" data-bind="attr: { 'lazy-src': $data.image, title: title }"/>
+                    </div>
+                    <div class="letter" data-bind="visible: $data.letter">
+                        <letter data-bind="text: $data.letter, style: { 'background-color': $data.color }"></letter>
+                    </div>
+                    <div class="title_subtitle">
+                        <div class="title" data-bind="text: title"></div>
+                        <div class="subtitle" data-bind="text: subtitle"></div>
+                    </div>
+                </button>
+            </items>
+            <div class="no_items" data-bind="visible: noItems, text: noItemsText"></div>
+        </section>
+        <footer data-bind="if: okButton.visible">
+            <wrapper cancel-button data-bind="visible: cancelButton.visible, with: cancelButton">
+                <button data-bind="text: text, click: onClick" ontouchstart="" onmouseover=""></button>
+            </wrapper>
+            <wrapper ok-button data-bind="visible: okButton.visible, with: okButton">
+                <button data-bind="text: text, click: onClick" ontouchstart="" onmouseover=""></button>
+            </wrapper>
+        </footer>
+    </article>
+</script>
+
+<script type="text/html" id="context-dialog-component">
+    <article dialog>
+        <header data-bind="text: title"></header>
+        <section context data-bind="foreach: items">
+            <button data-bind="click: $root.onItemClick">
+                <icon data-bind="html: icon"></icon>
+                <span data-bind="text: title"></span>
+            </button>
+        </section>
+    </article>
+</script>
+
+<script type="text/html" id="select-game-component">
+    <wrapper select-game-component>
+        <wrapper games data-bind="foreach: games">
+            <wrapper game>
+                <input class="radio" type="radio"
+                       data-bind="checked: checked, hasFocus: hasFocus, attr: { disabled: disabled, value: value }"/>
+
+                <button data-bind="click: onClick, attr: { title: text }" ontouchstart=""
+                        onmouseover="">
+                    <div class="icon" data-bind="html: icon"></div>
+                    <div class="text" data-bind="text: text"></div>
+                </button>
+            </wrapper>
+        </wrapper>
+        <wrapper after>
+            <div class="error" data-bind="css: { visible: showError() }">
+                <div class="text" data-bind="text: error"></div>
+                <wrapper warning data-bind="html: warningIcon"></wrapper>
+            </div>
+        </wrapper>
+        <wrapper other-input data-bind="template: { name: 'input-component', data: otherInput }"></wrapper>
+    </wrapper>
+</script>
+
+<script type="text/html" id="drag-component">
+    <wrapper drag>
+        <drag>
+            <div tabindex="0" class="handle"
+                 data-bind="text: value"></div>
+        </drag>
+        <wrapper after>
+            <div class="tip" data-bind="visible: showTip(), text: tip"></div>
+            <div class="error" data-bind="css: { visible: showError() }">
+                <div class="text" data-bind="text: error"></div>
+                <wrapper warning data-bind="html: warningIcon"></wrapper>
+            </div>
+        </wrapper>
+    </wrapper>
+</script>
+
+<script type="text/html" id="toggle-component">
+    <toggle>
+        <controls>
+            <button type="button"
+                    data-bind="click: onClick, html: icon, attr: { disabled: disabled }" ontouchstart=""
+                    onmouseover=""></button>
+            <div class="value" data-bind="text: valueLabel"></div>
+        </controls>
+        <wrapper tip-error>
+            <tip data-bind="text: tip, css: { visible: showTip() }"></tip>
+            <error data-bind="css: { visible: showError() }">
+                <div class="text" data-bind="text: error"></div>
+                <icon warning data-bind="html: warningIcon"></icon>
+            </error>
+        </wrapper>
+    </toggle>
+</script>
+
+<script type="text/html" id="dropdown-button-component">
+    <dropdown-button data-bind="visible: items().length > 0">
+        <button class="toggle" data-bind="with: selected, click: onDropdownClick, attr: { 'title': title }">
+            <wrapper icon>
+                <icon class="type font" data-bind="html: icon"></icon>
+                <span data-bind="text: $data.iconLetter"></span>
+            </wrapper>
+            <span class="title" data-bind="text: title"></span>
+            <icon class="dropdown font">keyboard_arrow_down</icon>
+        </button>
+        <ul data-bind="foreach: items, visible: isActive">
+            <li>
+                <button class="item" data-bind="click: $parent.onItemClick">
+                    <wrapper icon data-bind="visible: $data.icon">
+                        <icon class="type font" data-bind="html: $data.icon"></icon>
+                        <span data-bind="text: $data.iconLetter"></span>
+                    </wrapper>
+                    <wrapper title-subtitle>
+                        <div data-bind="text: title"></div>
+                        <div class="subtitle" data-bind="visible: $data.subTitle, text: $data.subTitle"></div>
+                    </wrapper>
+                </button>
+            </li>
+        </ul>
+    </dropdown-button>
+</script>
+
+<script type="text/html" id="toggle-buttons-component">
+    <toggle-buttons data-bind="foreach: items">
+        <button data-bind="click: $parent.onItemClick, disable: $parent.isDisabled, attr: { 'title': title }, css: { 'selected': $parent.isSelected($data) }">
+            <icon class="font" data-bind="visible: $data.icon, html: $data.icon"></icon>
+            <span data-bind="visible: $data.text, html: $data.text"></span>
+        </button>
+    </toggle-buttons>
+</script>
+
+<!-- /COMPONENTS -->
+
+<!-- PAGES -->
+
+<script type="text/html" id="login-page">
+    <wrapper login-page>
+        <form data-bind="submit: onFormSubmit">
+            <wrapper email-input data-bind="template: { name: 'input-component', data: emailInput }"></wrapper>
+            <wrapper login-button data-bind="with: loginButton">
+                <spinner login-spinner data-bind="template: { name: 'spinner-component', data: spinner }"></spinner>
+                <button type="submit" class="button"
+                        data-bind="click: onClick, text: text, title: title, attr: { disabled: disabled }, hasFocus: hasFocus"
+                        ontouchstart="" onmouseover=""></button>
+            </wrapper>
+        </form>
+    </wrapper>
+</script>
+
+<script type="text/html" id="pug-players">
+    <players
+            data-bind="foreach: { data: players, afterRender: $root.onPlayersDomRender }, attr: { 'data-teams': $data.teams, 'data-team-mode': $data.teamMode, 'data-state': $data.state }">
+        <!-- ko if: !userId -->
+        <player free data-bind="attr: { 'data-player-slot': $data.slot, 'data-player-team': $data.team }">
+            <button data-bind="click: $root.onPlayerClick.bind(this, $data, $parents[1]), attr: { title: $root.freePlayerText, disabled: $root.isViewDisabled }"
+                    ontouchstart="" onmouseover="">
+                <span class="text" data-bind="text: $data.slot"></span>
+            </button>
+            <div class="title" data-bind="text: $root.freePlayerTitle"></div>
+        </player>
+        <!-- /ko -->
+        <!-- ko if: userId -->
+        <player taken
+                data-bind="with: getUser(), attr: { 'data-player-user-id': userId, 'data-player-slot': $data.slot, 'data-player-team': $data.team }">
+            <button data-bind="click: $root.onPlayerClick.bind(this, $data, $parents[2]), attr: { title: $root.freePlayerText, disabled: $root.isViewDisabled }"
+                    ontouchstart="" onmouseover="">
+                <img draggable="false" src="img/1x1.png" class="image"
+                     data-bind="attr: { 'lazy-src': image, title: name }"/>
+            </button>
+            <div class="title" data-bind="text: firstName"></div>
+            <!-- ko if: $parent.rateDiff -->
+            <div class="rate" data-bind="text: $parent.rateDiff, attr: { 'data-type': $parent.rateType }"></div>
+            <!-- /ko -->
+        </player>
+        <!-- /ko -->
+    </players>
+</script>
+
+<script type="text/html" id="pug-header">
+    <div class="game_image" data-bind="html: game.src, attr: { title: title }">
+    </div>
+    <div class="game_title_pug_message">
+        <div class="game_title" data-bind="text: title"></div>
+        <div class="pug_message" data-bind="visible: message, text: message"></div>
+    </div>
+    <div class="pug_page" data-bind="with: $root.pugPageButton">
+        <button data-bind="html: icon, click: onClick.bind(this, $parent), disable: isDisabled, attr: { title: title }"
+                ontouchstart="" onmouseover=""></button>
+    </div>
+    <div class="is_invite" data-bind="visible: isInvite() && $root.inviteIcon">
+        <icon data-bind="html: $root.inviteIcon"></icon>
+    </div>
+</script>
+
+<!-- /PAGES -->
+
+<!-- COMMON -->
+
+<script type="text/html" id="user-common">
+    <a class="user-link" href="#" data-bind="attr: { 'href': '#users/' + id }">
+        <img class="user-image" data-bind="attr: { 'src': image, 'title': name }"/>
+    </a>
+    <div class="user-name"></div>
+</script>
+
+<!-- /COMMON -->
+
+<!-- APP -->
+
+<app data-bind="css: { 'drawer-open': drawerOpen }">
+    <wrapper app>
+        <loading application
+                 data-bind="template: { name: 'loading', data: loading }"></loading>
+        <drawer data-bind="template: { name: 'drawer', data: drawer }"></drawer>
+        <wrapper content>
+            <drawer-shadow></drawer-shadow>
+            <wrapper toolbar-pages>
+                <toolbar data-bind="template: { name: 'toolbar', data: toolbar }"></toolbar>
+                <spinner reload data-bind="template: { name: 'spinner-component', data: reload }"></spinner>
+                <wrapper pages>
+                    <pages></pages>
+                </wrapper>
+            </wrapper>
+        </wrapper>
+        <wrapper waiting></wrapper>
+        <wrapper dialog></wrapper>
+        <wrapper toast></wrapper>
+    </wrapper>
+</app>
+
+<!-- /APP -->
+
+</body>
+</html>

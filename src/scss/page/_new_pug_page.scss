@@ -1,0 +1,252 @@
+page[new-pug] {
+    padding: 10px 0;
+
+    wrapper[new-pug-page] {
+        background-color: #ffffff;
+        @include box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
+        margin: auto auto 10px;
+        max-width: 550px;
+        padding-bottom: 10px;
+
+        header {
+            background-color: $color-black-gray;
+            padding: 0px 5px;
+            color: #ffffff;
+            font-size: 10px;
+            text-transform: uppercase;
+            line-height: 2;
+        }
+
+        wrapper[select-game],
+        wrapper[game-radio],
+        wrapper[message-textarea],
+        wrapper[players-mode-readyplayers],
+        wrapper[invite] {
+            padding: 5px 10px;
+        }
+
+        wrapper[new-button] {
+            padding: 10px 10px 0px;
+            text-align: right;
+
+            spinner {
+                margin-right: 10px;
+            }
+        }
+
+        wrapper[players-mode-readyplayers] {
+
+            wrapper[ready-players] {
+                overflow-y: hidden;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin-top: 20px;
+
+                players {
+                    display: table;
+                    margin: auto;
+
+                    > * {
+                        display: table-cell;
+                        vertical-align: top;
+
+                        + * {
+                            padding-left: 10px;
+                        }
+                    }
+
+                    player {
+                        padding-top: 2px;
+                        min-width: 60px;
+                        text-align: center;
+
+                        &:first-child {
+                            padding-left: 2px;
+                        }
+
+                        &:last-child {
+                            padding-right: 2px;
+                        }
+
+                        &:before {
+                            margin-left: 0px !important;
+                        }
+
+                        button {
+                            height: 50px;
+                            width: 50px;
+                            @include border-radius(50%);
+                            background-color: rgba(0, 0, 0, 0.05);
+                            vertical-align: middle;
+                            //@include box-shadow(0px 1px 0px 1px rgba(0, 0, 0, 0.1));
+
+                            &[disabled], &[aria-disabled] {
+                                opacity: 0.5;
+                            }
+
+                            &:not([disabled]) {
+                                &:active {
+                                    background-color: $color-steel-blue;
+                                }
+                            }
+
+                            .text {
+                                text-align: center;
+                                font-size: 12px;
+                                color: $text-color-medium;
+                            }
+
+                            .player_image {
+                                img {
+                                    height: 50px;
+                                    width: 50px;
+                                    @include border-radius(50%);
+                                    background-color: rgba(0, 0, 0, 0.05);
+                                    vertical-align: middle;
+                                    @include box-shadow(0px 1px 0px 1px rgba(0, 0, 0, 0.1));
+                                }
+                            }
+                        }
+
+                        .player_firstname, .player_free {
+                            color: $text-color-light;
+                            font-size: 12px;
+                            margin-top: 5px;
+                            @extend .ellipsis;
+                            max-width: 75px;
+                            text-align: center;
+                            line-height: 1.3;
+
+                            &.player_free {
+                                font-style: italic;
+                            }
+                        }
+                    }
+
+                    @include pug-player-modes;
+                }
+
+                .tip {
+                    color: #666;
+                    font-size: 10px;
+                    padding: 2px;
+                    height: 14px;
+                    margin-top: 2px;
+                    text-align: center;
+                }
+            }
+
+            wrapper[mode] {
+                margin-top: 20px;
+                text-align: center;
+
+                > wrapper {
+                    display: inline-block;
+
+                    + wrapper {
+                        margin-left: 20px;
+                    }
+                }
+            }
+        }
+
+        wrapper[invite] {
+            wrapper[inviteing] {
+                .everyone {
+                    //line-height: 35px;
+                    vertical-align: middle;
+                    font-size: 14px;
+                    color: #666;
+                    font-style: italic;
+                }
+
+                players {
+                    display: block;
+
+                    player {
+                        @include display-flex;
+                        height: 40px;
+
+                        > * {
+                            @include align-self(center);
+                        }
+
+                        + player {
+                            border-top: 1px solid #dedede;
+                        }
+
+                        wrapper[image],
+                        wrapper[letter] {
+                            width: 35px;
+                            text-align: left;
+
+                            img, letter {
+                                display: inline-block;
+                                height: 30px;
+                                width: 30px;
+                                @include border-radius(50%);
+                                background-color: rgba(0, 0, 0, 0.05);
+                                vertical-align: middle;
+                                @include box-shadow(0px 1px 0px 1px rgba(0, 0, 0, 0.1));
+                            }
+
+                            letter {
+                                text-align: center;
+                                font-size: 16px;
+                                line-height: 30px;
+                                color: white;
+                                @include text-shadow(2px 1px $text-color);
+                            }
+                        }
+
+                        wrapper[title-subtitle] {
+                            width: calc(100% - 35px - 25px);
+
+                            .title {
+                                @extend .ellipsis;
+                                font-size: 14px;
+                                color: #666;
+                            }
+
+                            .subtitle {
+                                @extend .ellipsis;
+                                font-size: 10px;
+                                color: #999;
+                            }
+                        }
+
+                        wrapper[remove] {
+                            width: 30px;
+                            text-align: right;
+
+                            button {
+                                width: 25px;
+                                vertical-align: middle;
+                                cursor: pointer;
+
+                                &[disabled], &[aria-disabled] {
+                                    opacity: 0.5;
+                                }
+
+                                svg {
+                                    vertical-align: middle;
+
+                                    path {
+                                        fill: rgba($color-black-gray, 0.5);
+                                    }
+                                }
+
+                                &:active {
+                                    svg path {
+                                        fill: $color-black-gray;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

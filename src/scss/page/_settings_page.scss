@@ -1,0 +1,146 @@
+page[settings] {
+    padding: 10px 0;
+
+    article {
+        @extend .page_common;
+        padding: 0;
+
+        header {
+            background-color: $color-black-gray;
+            padding: 0px 5px;
+            color: #ffffff;
+            font-size: 10px;
+            text-transform: uppercase;
+            line-height: 2;
+        }
+
+        > wrapper {
+            padding: 10px;
+        }
+
+        wrapper[delete-user] {
+            @include display-flex;
+            @include align-items(center);
+
+            > div,
+            > wrapper[delete-button] {
+                display: inline-block;
+            }
+
+            > div {
+                @include flex-grow(1);
+            }
+        }
+
+        wrapper[user-groups] {
+            button {
+                padding: 5px;
+                border-radius: 3px;
+                border: 2px solid #CCCCCC;
+                margin: 0 5px 5px 0;
+
+                span {
+                    vertical-align: middle;
+                }
+
+                icon {
+                    vertical-align: middle;
+                }
+
+                &:focus, &:active {
+                    @extend %focus;
+                }
+            }
+        }
+
+        wrapper[push-devices] {
+            h2 {
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+            }
+
+            .devices {
+
+                .device {
+                    @include display-flex;
+                    @include align-items(center);
+                    @include justify-content(space-between);
+                    padding: 5px;
+
+                    &:nth-child(odd) {
+                        background-color: rgba(229, 229, 229, 0.8);
+                    }
+
+                    + .device {
+                        margin-top: 5px;
+                    }
+
+                    .name-date-id-wrapper {
+                        padding-right: 5px;
+                        @include flex(2);
+
+                        .name {
+                            font-size: 1.0rem;
+                        }
+
+                        .date-id-wrapper {
+                            font-size: 0.8rem;
+                            @include display-flex;
+                            white-space: nowrap;
+                            color: $text-color-medium;
+
+                            .date {
+                                &:after {
+                                    margin-left: 3px;
+                                    margin-right: 3px;
+                                    content: "-";
+                                }
+                            }
+
+                            .id {
+                                max-width: 190px;
+                                @extend .ellipsis;
+                            }
+                        }
+                    }
+
+                    button {
+                        background-color: $color-steel-blue;
+                        color: white;
+                        border-radius: 5px;
+                        height: 25px;
+                        line-height: 25px;
+                        vertical-align: middle;
+                        max-width: 35px;
+                        min-width: 35px;
+                        font-size: 18px;
+                        @include box-shadow(0 1px 2px 1px rgba(0, 0, 0, 0.3));
+                        @include flex(1);
+                    }
+                }
+            }
+
+            .no-devices {
+                font-style: italic;
+            }
+
+            .add-device-wrapper {
+                padding-top: 10px;
+                margin-top: 10px;
+                border-top: 2px solid $background-color-gray;
+                @include display-flex;
+                @include align-items(center);
+                @include justify-content(space-between);
+
+                div {
+                    font-size: 0.9rem;
+                }
+
+                button {
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+
+}

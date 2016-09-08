@@ -1,0 +1,80 @@
+wrapper[drag] {
+    drag {
+        display: block;
+        position: relative;
+        height: 30px;
+        background: $background-color-gray;
+
+        .handle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            width: 50px;
+            height: 30px;
+            background: $color-green;
+            color: #FFF;
+            font-size: 14px;
+            line-height: 30px;
+            text-align: center;
+
+            &:focus, &:active {
+                @include focus;
+            }
+        }
+
+        .disabled {
+            background: #898989;
+        }
+    }
+
+    wrapper[after] {
+        position: relative;
+        height: 14px;
+        margin-top: 2px;
+
+        div.error, div.tip {
+            position: absolute;
+            top: 0;
+            right: 0;
+            opacity: 0;
+            @include transition(all $transition-input-after ease-out);
+            white-space: nowrap;
+            font-size: 10px;
+            padding: 2px;
+            @include translate(0, -20%);
+        }
+
+        div.error {
+            color: #B30000;
+
+            &.visible {
+                @include translate(0, 0);
+                opacity: 1;
+            }
+
+            .text {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            wrapper[warning] {
+                display: inline-block;
+                vertical-align: middle;
+
+                svg {
+                    height: 10px;
+                    width: 10px;
+                    vertical-align: middle;
+                    fill: #800000;
+                }
+            }
+        }
+
+        div.tip {
+            color: #666;
+            opacity: 1;
+            @include translate(0, 0);
+        }
+    }
+}

@@ -1,0 +1,45 @@
+wrapper[toast] {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: $width-content-max;
+    @include transition(left $transition-drawer ease-out);
+
+    @include respond-to(large) {
+        left: $width-drawer;
+    }
+}
+
+toast {
+    display: block;
+    position: relative;
+    margin: 10px auto;
+    z-index: $z-index-toast;
+    max-width: $width-page-max - 50px;
+    text-align: center;
+    @include translate(0, 100%);
+
+    div.text {
+        font-size: 16px;
+        background-color: #000000;
+        color: #ffffff;
+        padding: 10px;
+        display: inline-block;
+        @include box-shadow(0 0 2px 1px rgba(0, 0, 0, 0.1));
+    }
+
+    &:not(.swipe) {
+        @include transition(all $transition-toast ease-out);
+    }
+
+    &.show {
+        @include translate(0%, 0%);
+    }
+
+    &.remove {
+        @include translate(0, 100%);
+    }
+}
+
+@import "pug_toast_component";

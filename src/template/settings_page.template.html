@@ -1,0 +1,58 @@
+<article>
+    <header>User groups</header>
+    <wrapper group-input data-bind="template: { name: 'input-component', data: groupInput }"></wrapper>
+    <wrapper user-groups data-bind="foreach: userGroups">
+        <button data-bind="click: $root.onUserGroupClick, style: { 'border-color': color }, attr: { 'title': $root.removeUserGroupText }">
+            <span data-bind="text: title"></span>
+            <icon class="icon-highlight-remove"></icon>
+        </button>
+    </wrapper>
+</article>
+
+<article data-bind="with: notifications">
+    <header>Notifications</header>
+    <wrapper notifications>
+        <ul class="notify-pug" data-bind="foreach: pugNotifications">
+            <li data-bind="template: { 'name': 'checkbox-component', 'data': $data}"></li>
+        </ul>
+    </wrapper>
+</article>
+
+<article data-bind="with: pushNotification">
+    <header>Push notification</header>
+    <wrapper push-devices>
+        <wrapper data-bind="template: { 'name': 'checkbox-component', 'data': usePushDevicesCheckbox}"></wrapper>
+
+        <ul class="devices" data-bind="foreach: pushDevices">
+            <li class="device">
+                <div class="name-date-id-wrapper">
+                    <div class="name" data-bind="text: name"></div>
+                    <div class="date-id-wrapper">
+                        <div class="date" data-bind="text: date"></div>
+                        <div class="id" data-bind="text: id"></div>
+                    </div>
+                </div>
+                <button title="Delete push device" class="icon-highlight-remove"
+                        data-bind="click: $parent.doRemovePushDevice">
+                </button>
+            </li>
+        </ul>
+
+        <!-- ko if: canAddDevice() -->
+        <div class="no-devices" data-bind="visible: pushDevices().length === 0">No registered devices</div>
+
+        <div class="add-device-wrapper">
+            <div>Add this device to push notifications</div>
+            <wrapper reload data-bind="template: { name: 'button-component', data: addDeviceButton }"></wrapper>
+        </div>
+        <!-- /ko -->
+    </wrapper>
+</article>
+
+<article>
+    <header>Delete user</header>
+    <wrapper delete-user>
+        <div>Delete logged in user</div>
+        <wrapper reload data-bind="template: { name: 'button-component', data: deleteButton }"></wrapper>
+    </wrapper>
+</article>

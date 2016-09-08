@@ -1,0 +1,16 @@
+"use strict";
+
+var NotifyCodes = {
+    PUG_NEW: "PUG_NEW",
+    PUG_COMMENT_NEW: "PUG_COMMENT_NEW",
+    PUG_JOIN: "PUG_JOIN",
+    PUG_LEAVE: "PUG_LEAVE",
+    PUG_USERS_INVITE: "PUG_USERS_INVITE",
+    USER_NEW: "USER_NEW",
+    USER_UPDATE: "USER_UPDATE",
+    PUG_STATE_FINISH: "PUG_STATE_FINISH",
+    PUG_STATE_READY: "PUG_STATE_READY",
+    PUG_CANCELED: "PUG_CANCELED"
+};
+
+module.exports = NotifyCodes;

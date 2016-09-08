@@ -1,0 +1,23 @@
+toggle-buttons {
+    @include display-flex();
+    background-color: white;
+    @include border-radius(5px);
+    @include box-shadow(0px 1px 2px 1px rgba(0, 0, 0, 0.1));
+    font-size: 1.1rem;
+    line-height: 1.3;
+    color: $text-color;
+    vertical-align: top;
+    overflow: hidden;
+
+    button {
+        vertical-align: middle;
+        line-height: 24px;
+        font-size: 22px;
+        padding: 5px 8px;
+
+        &.selected {
+            background-color: rgba($color-blue, 0.8);
+            color: white;
+        }
+    }
+}

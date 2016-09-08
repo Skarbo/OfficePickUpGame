@@ -1,0 +1,63 @@
+app {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    overflow: hidden;
+
+    wrapper[app] {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        //max-width: $width-app-max;
+        @include box-shadow(0px 0px 2px 1px rgba(0, 0, 0, 0.2));
+        margin: auto;
+    }
+
+    wrapper[content] {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        top: 0;
+        @include transition(left $transition-drawer ease-out);
+
+        @include respond-to(large) {
+            left: $width-drawer;
+        }
+
+        drawer-shadow {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            display: block;
+            z-index: -1;
+            background-color: rgba(0, 0, 0, 0.3);
+            @include transition(left $transition-drawer ease-out);
+        }
+
+        wrapper[toolbar-pages] {
+            position: relative;
+            width: 100%;
+            height: 100%;
+
+            spinner[reload] {
+                display: block;
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: $height-toolbar;
+                z-index: $z-index-reloading;
+            }
+        }
+    }
+
+    @include respond-to(not-large) {
+        &.drawer-open wrapper[content] drawer-shadow {
+            z-index: $z-index-drawer-shadow;
+        }
+    }
+}

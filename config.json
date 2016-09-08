@@ -1,0 +1,10 @@
+{
+  "port": 8200,
+  "portHttps": 8201,
+  "dbHost": "localhost",
+  "dbUser": "root",
+  "dbPassword": "",
+  "dbDatabase": "opug_dev",
+  "gcmKey": null,
+  "phonegapDir": null
+}

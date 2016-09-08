@@ -1,0 +1,95 @@
+toggle {
+    display: block;
+
+    controls {
+        display: block;
+        white-space: nowrap;
+
+        button {
+            display: inline-block;
+            background-color: #E5E5E5;
+            height: 30px;
+            width: 35px;
+            border-radius: 2px;
+            vertical-align: middle;
+            font-weight: bold;
+
+            svg {
+                height: 100%;
+                vertical-align: middle;
+            }
+
+            &[disabled] {
+                opacity: 0.5;
+            }
+
+            &:not([disabled]) {
+                &:hover {
+                    background-color: rgba(#E5E5E5, 0.8);
+                }
+
+                &:focus, &:active {
+                    @include focus;
+                }
+            }
+        }
+
+        div.value {
+            margin-left: 5px;
+            display: inline-block;
+            vertical-align: text-bottom;
+        }
+    }
+
+    wrapper[tip-error] {
+        position: relative;
+        height: 14px;
+
+        tip, error {
+            position: absolute;
+            top: 0;
+            opacity: 0;
+            @include transition(all $transition-tip-error ease-out);
+            white-space: nowrap;
+            font-size: 10px;
+            padding: 2px;
+            right: 0;
+            @include translate(0, -20%);
+        }
+
+        tip {
+            color: #666;
+
+            &.visible {
+                @include translate(0, 0);
+                opacity: 1;
+            }
+        }
+
+        error {
+            color: #B30000;
+
+            &.visible {
+                @include translate(0, 0);
+                opacity: 1;
+            }
+
+            .text {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            icon[warning] {
+                display: inline-block;
+                vertical-align: middle;
+
+                svg {
+                    height: 10px;
+                    width: 10px;
+                    vertical-align: middle;
+                    fill: #800000;
+                }
+            }
+        }
+    }
+}

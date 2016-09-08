@@ -1,0 +1,117 @@
+<wrapper filter>
+    <wrapper>
+        <wrapper data-bind="template: { 'name': 'dropdown-button-component', 'data': filter.game }"></wrapper>
+        <wrapper data-bind="template: { 'name': 'dropdown-button-component', 'data': filter.date }"></wrapper>
+        <wrapper data-bind="template: { 'name': 'toggle-buttons-component', 'data': filter.typeToggle }"></wrapper>
+    </wrapper>
+</wrapper>
+
+<wrapper no-pugs data-bind="visible: noPugs">
+    <div data-bind="text: noPugsText"></div>
+</wrapper>
+
+<wrapper pugs data-bind=", css: { 'visible': filter.typeToggle.selected() == 'results' }">
+    <pugs data-bind="foreach: pugs">
+        <pug data-bind="attr: { 'data-pug-id': id, 'data-pug-state': state }">
+            <header data-bind="template: { name: 'pug-header', 'data': $data }"></header>
+            <section>
+                <teams data-bind="foreach: $root.getTeams.call(null, $data), css: { 'is_double': isDouble, 'is_assign_mode': isTeamModeAssigned }, attr: { 'data-pug-state': state }">
+                    <wrapper team score data-bind="attr: { 'data-teams': teams }">
+                        <wrapper players data-bind="template: { name: 'pug-players', data: $data }"></wrapper>
+                        <wrapper score>
+                            <score>
+                                <div class="number" data-bind="text: score"></div>
+                            </score>
+                            <!-- ko if: $parent.isDouble -->
+                            <score second>
+                                <div class="number" data-bind="text: scoreDouble"></div>
+                            </score>
+                            <!-- /ko -->
+                        </wrapper>
+                    </wrapper>
+                </teams>
+            </section>
+            <footer>
+                <wrapper footer>
+                    <time class="date"
+                          data-bind="text: $root.getCalendarText(created), attr: { 'datetime': created }"></time>
+                    <span data-bind="text: $root.getTeamsText($data)"></span>
+                    <!-- ko with: $root.getTeamModeText($data) -->
+                    <span data-bind="text: $data"></span>
+                    <!-- /ko -->
+                </wrapper>
+            </footer>
+        </pug>
+    </pugs>
+</wrapper>
+
+<wrapper pugs-tables data-bind="foreach: pugsTables, css: { 'visible': filter.typeToggle.selected() == 'table' }">
+    <article class="pugs-table" data-bind="visible: isToShowTable">
+        <header>
+            <game>
+                <wrapper game-icon data-bind="html: game.src, attr: { 'title': game.title }"></wrapper>
+                <div class="title" data-bind="text: game.title"></div>
+            </game>
+        </header>
+        <wrapper table>
+            <table data-bind="attr: { 'data-sort-by': sortBy }">
+                <thead>
+                <tr>
+                    <td class="user">
+                        <icon class="font">person</icon>
+                        <span>User</span>
+                    </td>
+                    <td class="pug-count">
+                        <icon class="font">opug_controller</icon>
+                        <span>Pld.</span>
+                    </td>
+                    <td class="standing-percent">
+                        <icon class="font">trophy</icon>
+                        <span>Win %</span>
+                    </td>
+                    <!-- ko if: hasRate -->
+                    <td class="rate-diff">
+                        <icon class="font">star_half</icon>
+                        <span>Rate +/-</span>
+                    </td>
+                    <td class="rate">
+                        <icon class="font">star</icon>
+                        <span>Rate</span>
+                    </td>
+                    <!-- /ko -->
+                    <td class="form">
+                        <icon class="font">trending_up</icon>
+                        <span>Form</span>
+                    </td>
+                </tr>
+                </thead>
+                <tbody class="pugs-table" data-bind="foreach: players">
+                <tr>
+                    <td class="user">
+                        <user>
+                            <div class="placing" data-bind="text: placing"></div>
+                            <wrapper user-image>
+                                <img src="img/1x1.png"
+                                     data-bind="attr: { 'title': user.name, 'lazy-src': user.image }"/>
+                            </wrapper>
+                            <div class="name" data-bind="text: user.firstName"></div>
+                        </user>
+                    </td>
+                    <td class="pug-count" data-bind="text: pugCount"></td>
+                    <td class="standing-percent" data-bind="text: standingPercent"></td>
+                    <!-- ko if: $parent.hasRate -->
+                    <td class="rate-diff" data-bind="text: rateDiff"></td>
+                    <td class="rate" data-bind="text: rate"></td>
+                    <!-- /ko -->
+                    <td class="form">
+                        <wrapper data-bind="foreach: form">
+                            <a href="#" class="result"
+                               data-bind="text: result, attr: { 'data-type': type, 'href': '#pug/' + pugId }"></a>
+                        </wrapper>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </wrapper>
+    </article>
+</wrapper>

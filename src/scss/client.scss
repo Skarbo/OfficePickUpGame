@@ -1,0 +1,84 @@
+@import "compass/reset";
+@import "compass/css3";
+@import "font/font";
+@import "lib/lib";
+@import "common";
+@import "markdown";
+@import "module/app";
+@import "component/component";
+@import "page/page";
+
+app, drawer, wrapper, toolbar, pages, page, card {
+    display: block;
+}
+
+icon {
+    display: inline-block;
+}
+
+html {
+    line-height: 1.5;
+
+    @media only screen and (min-width: 0) {
+        font-size: 14px;
+    }
+
+    @media only screen and (min-width: $medium-screen) {
+        font-size: 14.5px;
+    }
+
+    @media only screen and (min-width: $large-screen) {
+        font-size: 15px;
+    }
+
+    font-family: "Roboto", sans-serif;
+    font-weight: normal;
+    color: $text-color;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 400;
+    line-height: 1.1;
+}
+
+* {
+    @include user-select();
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    @include box-sizing(border-box);
+}
+
+*:focus {
+    outline: none;
+    outline-offset: -2px; // Opera
+
+    // Remove Firefox inner outline(!)
+    &::-moz-focus-inner {
+        border: 0;
+    }
+}
+
+a, a:hover, a:active, a:visited {
+    color: inherit;
+    text-decoration: underline;
+}
+
+app {
+    min-width: $width-min;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vertical_align {
+    display: table;
+    width: 100%;
+    height: 100%;
+
+    > * {
+        display: table-cell;
+        vertical-align: middle;
+    }
+}

@@ -1,0 +1,43 @@
+<wrapper pugs-page>
+    <pugs data-bind="foreach: pugs">
+        <!-- ko with: $root.getStateHeader($data, $index()) -->
+        <h2 class="state-header" data-bind="if: $data">
+            <icon class="font" data-bind="text: icon"></icon>
+            <span data-bind="text: title"></span></h2>
+        <!-- /ko -->
+
+        <pug data-bind="attr: { 'data-pug-id': id, 'data-pug-state': state }, css: { 'selected': $parent.isPugSelected( $data ) }"
+             ontouchstart="" onmouseover="">
+            <header data-bind="template: { name: 'pug-header', 'data': $data }"></header>
+            <section>
+                <wrapper players
+                         data-bind="template: { name: 'pug-players', data: $root.getPugPlayers($data) }"></wrapper>
+            </section>
+            <footer>
+                <wrapper footer>
+                    <!-- ko if: isStateWaiting() -->
+                    <time data-bind="attr: { 'datetime': $root.getTimeDatetime($data), title: $root.pugTimeTitle }"
+                          update></time>
+                    <!-- /ko -->
+                    <span class="state_status" data-bind="text: $root.getStateStatus($data)"></span>
+                    <span data-bind="text: $root.getTeamsText($data)"></span>
+                    <!-- ko with: $root.getTeamModeText($data) -->
+                    <span data-bind="text: $data"></span>
+                    <!-- /ko -->
+                </wrapper>
+                <wrapper action-button data-bind="with: $root.getPugActionButton($data)">
+                    <button class="action"
+                            data-bind="click: onClick, html: icon, attr: { title: title, disabled: disabled }"
+                            ontouchstart="" onmouseover=""></button>
+                </wrapper>
+            </footer>
+        </pug>
+    </pugs>
+    <wrapper no-pugs data-bind="visible: noPugs">
+        <div data-bind="text: noPugsText"></div>
+        <div>
+            <button class="button" data-bind="click: onNewPugClick, text: newPugText" ontouchstart=""
+                    onmouseover=""></button>
+        </div>
+    </wrapper>
+</wrapper>

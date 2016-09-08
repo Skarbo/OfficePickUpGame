@@ -1,0 +1,126 @@
+dialog[alert] {
+    position: fixed;
+    z-index: $z-index-dialog;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    @include flex-direction(row);
+    height: 100%;
+    @include align-items(stretch);
+    @include align-content(center);
+    display: none;
+    opacity: 0;
+    border: 0;
+    width: 100%;
+
+    &.animate {
+        @include transition(all $transition-dialog ease-out);
+
+        article[dialog] {
+            @include transition(all $transition-dialog-content ease-out);
+        }
+    }
+
+    &.show {
+        opacity: 1;
+
+        article[dialog] {
+            @include translate(0%, 0%);
+            opacity: 1;
+        }
+    }
+
+    &.visible {
+        @include display-flex;
+    }
+
+    article[dialog] {
+        display: block;
+        @include align-self(center);
+        background-color: #ffffff;
+        width: 95%;
+        margin: auto;
+        opacity: 0;
+        @include translate(0%, 20%);
+        $transitions: tranform, opacity;
+        @include transition(all $transition-dialog ease-out);
+        max-width: 400px;
+        margin: auto;
+        @include box-shadow(0 0 2px 2px rgba(0, 0, 0, 0.3));
+
+        header {
+            display: table;
+            width: 100%;
+            padding: 20px 10px;
+
+            > * {
+                display: table-cell;
+                vertical-align: middle;
+            }
+
+            .icon {
+                width: 1%;
+                padding-right: 10px;
+
+                svg {
+                    vertical-align: middle;
+                    height: 18px;
+                    width: 18px;
+
+                    path {
+                        fill: #555;
+                    }
+                }
+            }
+
+            .title {
+                font-size: 18px;
+                color: $color-steel-blue;
+            }
+        }
+
+        section {
+            padding: 20px 10px;
+            font-size: 16px;
+            line-height: 1.3;
+            border-top: 2px solid $color-steel-blue;
+
+            + section {
+                padding-top: 0px;
+                border: none;
+            }
+        }
+
+        footer {
+            display: table;
+            border-top: 1px solid $color-light-gray;
+            width: 100%;
+            font-size: 14px;
+
+            wrapper {
+                display: table-cell;
+                width: 50%;
+                vertical-align: middle;
+                text-align: center;
+                height: 40px;
+
+                + wrapper {
+                    border-left: 1px solid $color-light-gray;
+                }
+
+                button {
+                    height: 100%;
+                    width: 100%;
+                    background-color: #ffffff;
+
+                    &:active {
+                        background-color: $color-light-gray;
+                    }
+                }
+            }
+        }
+    }
+
+}

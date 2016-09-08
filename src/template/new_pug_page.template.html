@@ -1,0 +1,74 @@
+<wrapper new-pug-page>
+    <form data-bind="submit: onFormSubmit">
+        <header data-bind="text: selectGameText"></header>
+        <wrapper select-game data-bind="template: { name: 'select-game-component', data: selectGame }"></wrapper>
+        <header data-bind="text: messageText"></header>
+        <wrapper message-textarea
+                 data-bind="template: { name: 'textarea-component', data: messageTextarea }"></wrapper>
+        <header data-bind="text: playersText"></header>
+        <wrapper players-mode-readyplayers>
+            <wrapper players-drag
+                     data-bind="template: { name: 'drag-component', data: playersDrag }"></wrapper>
+            <wrapper mode>
+                <wrapper teams-toggle
+                         data-bind="template: { name: 'toggle-component', data: teamsToggle }"></wrapper>
+                <wrapper team-mode-toggle
+                         data-bind="template: { name: 'toggle-component', data: teamModeToggle }"></wrapper>
+            </wrapper>
+            <wrapper ready-players>
+                <players
+                        data-bind="foreach: readyPlayers, attr: { 'data-teams': teamsToggle.value, 'data-team-mode': teamModeToggle.value }">
+                    <player data-bind="attr: { 'data-player-team': $data.team }">
+                        <button data-bind="click: $root.onPlayerReadyClick.bind(this, $data, $index()), css: { 'free': !$data.user() }, attr: { disabled: $root.isViewDisabled }"
+                                ontouchstart="" onmouseover="">
+                            <!-- ko if: !$data.user() -->
+                            <div class="vertical_align">
+                                <div class="text" data-bind="text: slot"></div>
+                            </div>
+                            <!-- /ko -->
+                            <!-- ko if: $data.user() -->
+                            <div class="player_image">
+                                <img src="img/1x1.png" class="image"
+                                     data-bind="attr: { 'src': user().image, title: user().userName }"/>
+                            </div>
+                            <!-- /ko -->
+                        </button>
+                        <!-- ko if: !$data.user()  -->
+                        <div class="player_free" data-bind="text: $root.freeText"></div>
+                        <!-- /ko -->
+                        <!-- ko if: $data.user()  -->
+                        <div class="player_firstname" data-bind="text: user().firstName"></div>
+                        <!-- /ko -->
+                    </player>
+                </players>
+                <div class="tip" data-bind="text: readyPlayersTipText"></div>
+            </wrapper>
+        </wrapper>
+        <header data-bind="text: inviteText"></header>
+        <wrapper invite>
+            <wrapper invite-input data-bind="template: { name: 'input-component', data: inviteInput }"></wrapper>
+            <wrapper inviteing>
+                <div class="everyone"
+                     data-bind="text: inviteEveryoneText, visible: invitePlayers().length === 0"></div>
+                <players data-bind="foreach: invitePlayers">
+                    <player data-bind="title: title">
+                        <wrapper image data-bind="visible: $data.image">
+                            <img data-bind="attr: { src: $data.image }"/>
+                        </wrapper>
+                        <wrapper letter data-bind="visible: $data.letter">
+                            <letter data-bind="text: $data.letter, style: { 'background-color': $data.color }"></letter>
+                        </wrapper>
+                        <wrapper title-subtitle>
+                            <div class="title" data-bind="text: title"></div>
+                            <div class="subtitle" data-bind="visible: subtitle, text: subtitle"></div>
+                        </wrapper>
+                        <wrapper remove>
+                            <button data-bind="html: $root.removeIcon, click: $root.doRemoveInvite, attr: { disabled: $root.isViewDisabled }"
+                                    ontouchstart="" onmouseover=""></button>
+                        </wrapper>
+                    </player>
+                </players>
+            </wrapper>
+        </wrapper>
+    </form>
+</wrapper>

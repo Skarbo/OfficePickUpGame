@@ -1,0 +1,177 @@
+<script type="text/html" id="pug-score">
+    <!-- ko if: $root.isEditable -->
+    <button class="icon-keyboard_arrow_down" data-bind="click: onScoreDecClick"></button>
+    <!-- /ko -->
+    <div class="number" data-bind="text: score">0</div>
+    <!-- ko if: $root.isEditable -->
+    <button class="icon-keyboard_arrow_up" data-bind="click: onScoreIncClick"></button>
+    <!-- /ko -->
+</script>
+
+<wrapper pug-page data-bind="if: pug">
+    <!-- Canceled -->
+    <article canceled data-bind="visible: isCanceled()">
+        <icon class="icon-warning"></icon>
+        <span>Pick-Up Game is canceled: </span>
+        '<span data-bind="text: pug().canceledMessage"></span>'
+    </article>
+
+    <!-- Not playable -->
+    <article not-playable data-bind="visible: isNotPlayable()">
+        <icon class="icon-warning"></icon>
+        <span>Pick-Up Game is for invites only</span>
+    </article>
+
+    <article teams>
+        <teams data-bind="foreach: $root.getTeams.call(null, pug), css: { 'is_double': pug().isDouble, 'is_assign_mode': $root.isPlayerAssignMode }, attr: { 'data-pug-state': pug().state, 'data-teams': pug().teams, 'data-team-mode': pug().teamMode }">
+            <wrapper team score data-bind="attr: { 'data-teams': teams }">
+                <!--<wrapper players data-bind="template: { name: 'pug-players', data: $data }"></wrapper>-->
+                <!--<wrapper score>-->
+                    <!--<score data-bind="template: { name: 'pug-score', data: $root.getScore.bind(null, $data, false) }"></score>-->
+                    <!--&lt;!&ndash; ko if: $root.isDouble() &ndash;&gt;-->
+                    <!--<score second-->
+                           <!--data-bind="template: { name: 'pug-score', data: $root.getScore.bind(null, $data, true) }"></score>-->
+                    <!--&lt;!&ndash; /ko &ndash;&gt;-->
+                <!--</wrapper>-->
+            </wrapper>
+        </teams>
+        <footer data-bind="css: { 'has_action_button': actionButton.isVisible }">
+            <wrapper footer>
+                <span data-bind="text: info.statusText"></span>
+                <span data-bind="text: info.teamsText"></span>
+                <span data-bind="text: info.teamModeText, visible: info.teamModeText"></span>
+            </wrapper>
+            <wrapper action-button data-bind="with: actionButton, visible: actionButton.isVisible">
+                <button class="action"
+                        data-bind="click: onClick, html: icon, attr: { title: title, disabled: disabled }"
+                        ontouchstart="" onmouseover=""></button>
+            </wrapper>
+        </footer>
+    </article>
+
+    <!-- ko with: tabs -->
+    <tabs data-bind="foreach: tabs">
+        <tab data-bind="click: $parent.onTabClick, css: { 'active': $parent.isTabActive($data) }">
+            <icon class="font" data-bind="text: icon"></icon>
+        </tab>
+    </tabs>
+    <!-- /ko -->
+
+    <article info data-tab="info" data-bind="with: infoTab">
+        <!-- Remaining time -->
+        <!-- ko if: $root.pug().isStateWaiting() && !$root.pug().isCanceled() -->
+        <wrapper remaining-time>
+            <h2>
+                <icon class="icon-timer"></icon>
+                <span>Remaining time</span>
+            </h2>
+            <div class="clock" data-bind="text: remainingTime">00:00</div>
+            <div class="tip">Time until canceled for inactivity</div>
+        </wrapper>
+        <!-- /ko -->
+
+        <!-- Invite -->
+        <!-- ko if: $root.isInviteOnly() -->
+        <wrapper invite>
+            <h2>
+                <icon class="icon-verified-user"></icon>
+                <span>Invited</span>
+            </h2>
+            <invites data-bind="foreach: invites">
+                <invite>
+                    <div class="image_letter">
+                        <div class="image" data-bind="visible: $data.image">
+                            <img src="img/1x1.png" data-bind="attr: { 'src': $data.image, title: title }"/>
+                        </div>
+                        <div class="letter" data-bind="visible: $data.letter">
+                            <letter data-bind="text: $data.letter, style: { 'background-color': $data.color }"></letter>
+                        </div>
+                    </div>
+                    <div class="title" data-bind="text: title"></div>
+                </invite>
+            </invites>
+        </wrapper>
+        <!-- /ko -->
+
+        <!-- Pug -->
+        <wrapper pug data-bind="with: pug">
+            <h2>
+                <icon class="font">opug_controller</icon>
+                <span>Pick-Up Game</span>
+            </h2>
+
+            <wrapper game data-bind="if: game" class="image-title-subtitle-wrapper">
+                <div class="icon-wrapper">
+                    <icon data-bind="html: game().src, attr: { 'title': game().title }"></icon>
+                </div>
+                <div class="title-subtitle-wrapper">
+                    <div class="title" data-bind="text: title"></div>
+                    <div class="subtitle" data-bind="text: message"></div>
+                </div>
+            </wrapper>
+
+            <wrapper creator data-bind="if: user" class="image-title-subtitle-wrapper">
+                <div class="icon-wrapper">
+                    <img data-bind="attr: { 'src': user().image, 'title': user().name }"/>
+                </div>
+                <div class="title-subtitle-wrapper">
+                    <a class="title" data-bind="text: user().name, attr: { 'href': '#user/' + user().id }"></a>
+
+                    <div class="subtitle">
+                        Created <span
+                            data-bind="text: createdFormatted, attr: { 'title': created, 'data-from-now': created }"></span>
+                    </div>
+                </div>
+            </wrapper>
+        </wrapper>
+
+        <!-- Form -->
+        <wrapper form data-bind="with: form">
+            <h2>
+                <icon class="font">trending_up</icon>
+                <span>Form</span>
+            </h2>
+            <wrapper form-players data-bind="foreach: $data">
+                <wrapper form-player data-bind="visible: form.length > 0, attr: { 'data-team': team }">
+                    <div class="player_image">
+                        <img data-bind="attr: { 'src': user.image, 'title': user.name }"/>
+                    </div>
+                    <wrapper form-player-form data-bind="foreach: form">
+                        <a href="#" class="result"
+                           data-bind="text: result, attr: { 'data-type': type, 'href': '#pug/' + pugId }"></a>
+                    </wrapper>
+                </wrapper>
+            </wrapper>
+        </wrapper>
+    </article>
+
+    <wrapper data-tab="comments">
+        <article add-comment>
+            <wrapper comment-textarea
+                     data-bind="template: { name: 'textarea-component', data: commentTextarea }"></wrapper>
+            <wrapper comment-button data-bind="with: commentButton">
+                <spinner login-spinner data-bind="template: { name: 'spinner-component', data: spinner }"></spinner>
+                <button type="submit" class="button"
+                        data-bind="click: onClick, text: text, title: title, attr: { disabled: disabled }, hasFocus: hasFocus"
+                        ontouchstart="" onmouseover=""></button>
+            </wrapper>
+        </article>
+
+        <article comments data-bind="visible: comments().length > 0">
+            <comments data-bind="foreach: comments">
+                <comment>
+                    <wrapper user date>
+                        <user data-bind="with: user">
+                            <img src="img/1x1.png" class="image"
+                                 data-bind="attr: { 'src': image, title: name }"/>
+
+                            <span class="name" data-bind="text: name"></span>
+                        </user>
+                        <time data-bind="text: $root.getFromNowText( created ), attr: { 'datetime': created }"></time>
+                    </wrapper>
+                    <wrapper class="markdown-body" message data-bind="html: messageHtml"></wrapper>
+                </comment>
+            </comments>
+        </article>
+    </wrapper>
+</wrapper>

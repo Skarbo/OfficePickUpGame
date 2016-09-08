@@ -1,0 +1,40 @@
+<article>
+    <users data-bind="foreach: users">
+        <user>
+            <header>
+                <wrapper image>
+                    <img src="img/1x1.png" data-bind="attr: { 'lazy-src': image, title: name }"/>
+                </wrapper>
+                <wrapper name-email>
+                    <name data-bind="text: name"></name>
+                    <email data-bind="text: email"></email>
+                </wrapper>
+                <wrapper user-page data-bind="with: $root.userPageButton">
+                    <button class="icon-keyboard-arrow-right"
+                            data-bind="click: onClick.bind(null, $parent), disable: isDisabled, attr: { title: title }"
+                            ontouchstart="" onmouseover="">keyboard_arrow_right
+                    </button>
+                </wrapper>
+            </header>
+            <section data-bind="foreach: placing, visible: placing().length > 0">
+                <placing data-bind="with: $root.createUserPlacing($data)">
+                    <game>
+                        <wrapper image data-bind="html: game.src, attr: { 'text': game.title }">
+                        </wrapper>
+                    </game>
+                    <wrapper count-standing>
+                        <count title="Games played">
+                            <icon class="font">opug_controller</icon>
+                            <span data-bind="text: pugCount"></span></count>
+                        <standing title="Win rate">
+                            <icon class="font">trophy</icon>
+                            <span data-bind="text: standingPercentText"></span></standing>
+                        <rate title="Rating" data-bind="visible: rateText">
+                            <icon class="font">star</icon>
+                            <span data-bind="text: rateText"></span></rate>
+                    </wrapper>
+                </placing>
+            </section>
+        </user>
+    </users>
+</article>
